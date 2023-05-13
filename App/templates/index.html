@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dicom-STL Viewer</title>
+
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <script src="https://unpkg.com/dicom-parser@1.8.21/dist/dicomParser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.js"></script>
+
+    <link rel="stylesheet" href="./Style.css">
+    <link rel="shortcut icon" type="image/png" href="./logo_icon.png"/>
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+</head>
+
+<body>
+<div id="container">
+    <div id="info-panel">
+        <img src="logo.png" width="250px" height="auto" id="image">
+        <h3 style="margin-left: auto; margin-right: auto">Dicom-STL 3D Viewer</h3>
+        <button id="Import_button">Import des fichiers</button>
+
+
+        <p id="Log_Messages"></p>
+        <div id="Info_Files"></div>
+    </div>
+
+</div>
+<button id="retract_button">...</button>
+<div id="3D_viewer">
+</div>
+</body>
+<script src="./Code.js" type="module"></script>
+</html>
