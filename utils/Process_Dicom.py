@@ -1,5 +1,8 @@
+import os.path
+
 from utils.Offset import *
 from utils.Point import *
+import random
 import pydicom
 import pydicom.uid as uid
 from pydicom.dataset import DataElement
@@ -43,11 +46,13 @@ def retrieve_Contours(model):
 
 def from_Dicom_STL_Encapsulated(Dicom_Path):
     DC = pydicom.dcmread(Dicom_Path)
+    Dir_path = os.path.dirname(Dicom_Path)
     if ([0x0042, 0x0010] in DC):
         name = DC[0x0042, 0x0010].value+ ".stl"
     else:
-        name = "sub"
-    file = open(name,"wb")
+        print("Error : The file doesn't contain a STL file encapsulated")
+        return
+    file = open(Dir_path+"/"+name,"wb")
     file.write(DC[0x0042, 0x0011].value)
     file.close()
 
@@ -141,7 +146,9 @@ def create_Dicom_From_Nothing(STL_Path,ID):
     DS.save_as(str(f.name).split(".")[0] + ".dcm")
 
 
-def new_create_Dicom_From_Nothing(STL_Path,ID,DICOM_Path = None):
+def new_create_Dicom_From_Nothing(STL_Path,ID=None,DICOM_Path = None,New_Path = None):
+    f = open(STL_Path, "rb")
+
     if(DICOM_Path != None):
         DS = pydicom.dcmread(DICOM_Path)
         for data_element in DS:
@@ -149,10 +156,21 @@ def new_create_Dicom_From_Nothing(STL_Path,ID,DICOM_Path = None):
         print(DS)
     else:
         DS = pydicom.Dataset()
+    if(ID==None):
+        NID = random.randint(100000,999999)
+    else:
+        NID = ID
+
+    if(New_Path == None):
+        #NP = os.path.dirname(STL_Path) +"/" + os.path.basename(STL_Path)
+        NP = str(f.name).split(".")[0] + ".dcm"
+    else:
+        NP = New_Path
+
     General_id_frame_of_reference = uid.generate_uid()
     # -------------------------------- Patient --------------------------------
     DS.add(DataElement(0x00100010, "PN", ''))
-    DS.add(DataElement(0x00100020, "LO", "TG"+ str(ID)))
+    DS.add(DataElement(0x00100020, "LO", "TG"+ str(NID)))
     DS.add(DataElement(0x00100030, "DA", "20000101"))
     DS.add(DataElement(0x00100040, "CS", "M"))
     # -------------------------------- Patient --------------------------------
@@ -178,7 +196,6 @@ def new_create_Dicom_From_Nothing(STL_Path,ID,DICOM_Path = None):
 
     DS.add(DataElement(0x0040A043, "SQ", None))
 
-    f = open(STL_Path,"rb")
     DS.add(DataElement(0x00420010, "ST", str(f.name).split(".")[0]))
 
     f_data = f.read()
@@ -221,20 +238,20 @@ def new_create_Dicom_From_Nothing(STL_Path,ID,DICOM_Path = None):
     DS.SOPInstanceUID = uid.generate_uid()
 
 
-    #DS.file_meta.MediaStorageSOPClassUID = uid.EncapsulatedSTLStorage
-    #DS.file_meta.MediaStorageSOPInstanceUID = DS.SOPInstanceUID
-    #DS.file_meta = pydicom.dataset.FileMetaDataset()
+    if(DICOM_Path== None):
+        DS.file_meta = pydicom.dataset.FileMetaDataset()
+        DS.file_meta.ImplementationClassUID = '1.0.0.0.0.0.22213.1.143'
+        DS.file_meta.ImplementationVersionName = '0.5'
+        DS.file_meta.add_new((0x0002, 0x0000), "UL", 100)
+        DS.file_meta.add_new((0x0002, 0x0001), "OB", b'\x00\x01')
     DS.file_meta.MediaStorageSOPClassUID = DS.SOPClassUID
     DS.file_meta.MediaStorageSOPInstanceUID = DS.SOPInstanceUID
-    #DS.file_meta.ImplementationClassUID = '1.0.0.0.0.0.22213.1.143'
     DS.file_meta.TransferSyntaxUID = pydicom.uid.ImplicitVRLittleEndian
-    #DS.file_meta.ImplementationVersionName = '0.5'  # implementation version name
-    #DS.file_meta.SourceApplicationEntityTitle = 'POSDA'
-    #DS.file_meta.add_new((0x0002, 0x0000), "UL", 208)
-    #DS.file_meta.add_new((0x0002, 0x0001), "OB", b'\x00\x01')
+
     DS.is_little_endian = True
     DS.is_implicit_VR = True
-    DS.save_as(str(f.name).split(".")[0] + ".dcm")
+    DS.save_as(NP)
+
 
 def to_Dicom_STL_Encapsulated(Dicom_Path, STL_Path):
 

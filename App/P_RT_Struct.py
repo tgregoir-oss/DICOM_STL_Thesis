@@ -14,7 +14,7 @@ TypeSTL = ['Binary','ASCII']
 SmoothOption = ['True','False']
 OutputList = ["STL", "DICOM", "STL and DICOM"]
 
-Text_intro = "This page allow to reconstruct 3D Models from DICOM RT Struct files. \n You can modify the settings to obtain results that you want"
+Text_intro = "This page allow to reconstruct 3D Models from DICOM RT Struct files. \nYou can modify the settings to obtain results that you want"
 class P_RT_Struct(Frame):
     def __init__(self, parent):
         super().__init__(parent)

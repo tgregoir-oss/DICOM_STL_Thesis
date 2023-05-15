@@ -75,10 +75,11 @@ def process_DICOM_RT_Strcut(path, definition=256, save_external_stl=2, Smoothing
         if (Smoothing == 0):
             Smooth_Mesh(STL_path, 0,fichier)
         if (save_external_stl == 1 or save_external_stl == 2):
-            to_Dicom_STL_Encapsulated(path, STL_path)
+            new_create_Dicom_From_Nothing(STL_Path=STL_path,DICOM_Path=path)
+            #to_Dicom_STL_Encapsulated(path, STL_path)
     print(f'100% done \t| Total Execution Time : {time.time()-start:.2}s')
 
-def process_Nifti_file(path, new_path=None, Smoothing=3, fichier=1):
+def process_Nifti_file(path, new_path=None, Smoothing=3,save_external_stl=2, fichier=0):
     file = nib.load(path)
     data = file.get_fdata()
 
@@ -105,12 +106,14 @@ def process_Nifti_file(path, new_path=None, Smoothing=3, fichier=1):
     if (check == True):
         if (Smoothing == 3):
             Smooth_Mesh(new_path, 0,fichier)
+        if (save_external_stl >= 1):
+            new_create_Dicom_From_Nothing(new_path)
         return True
 
     return False
 
 
-def check_dicom_series(input_path, start, end):
+def check_dicom_series(input_path, start=0, end=0,task="total",fast=False,fichier=0,save_external_stl=2,smoothing=True):
     files = os.listdir(input_path)
     dicom_files = [f for f in files if f.endswith(".dcm")]
     if (len(dicom_files) == 0):
@@ -150,7 +153,10 @@ def check_dicom_series(input_path, start, end):
 
     process_folder_gz()
 
-    process_folder_nii()
+    List_file = os.listdir("nii_folder/")
+    print("we enter in process_folder_nii ")
+    for i in List_file:
+        execute("nii_folder/" + i,)
     return True
 
 
@@ -210,13 +216,13 @@ def check_path(input_path, start=0, end= inf):
         print("error")
         return False
 
-def execute(path):
+def execute(path,fichier=0,save_external_stl=2,smoothing=True):
     Splitted_path = path.split(".")
 
     new_path = "stl_folder" +"/"+ str(Splitted_path[0].split("/")[1]) + ".stl"
 
     start = time.time()
-    check = process_Nifti_file(path,new_path=new_path,fichier=0)
+    check = process_Nifti_file(path,new_path=new_path,fichier=fichier,save_external_stl=save_external_stl,Smoothing=smoothing)
 
     end = time.time()
     elapsed = end - start

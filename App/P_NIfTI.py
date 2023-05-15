@@ -14,14 +14,14 @@ TypeSTL = ['Binary','ASCII']
 SmoothOption = ['True','False']
 OutputList = ["STL", "DICOM", "STL and DICOM"]
 
-Text_intro = "This page allow to reconstruct 3D Models from NIfTI. \n You can modify the settings to obtain results that you want.\nBe sure that the NIfTI file are correct before using."
+Text_intro = "This page allow to reconstruct 3D Models from NIfTI. \nYou can modify the settings to obtain results that you want.\nBe sure that the NIfTI file are correct before using."
 class P_NIfTI(Frame):
     def __init__(self, parent):
         super().__init__(parent)
 
         # Ajouter du code pour la page 1 ici
         label = Label(self, text=Text_intro, font=("Arial",12),borderwidth=2,relief="solid")
-        label.place(x=50, y=10, width=550, height=45)
+        label.place(x=50, y=10, width=550, height=57)
 
         self.ComboSTL = Combobox(self, values=TypeSTL,state="readonly")
         self.ComboSTL.place(x=50, y=100, width=150, height=25)
@@ -41,7 +41,7 @@ class P_NIfTI(Frame):
         self.ComboOutput_text = Label(self, text="Generated output", anchor='w')
         self.ComboOutput_text.place(x=450, y=75, width=150, height=25)
 
-        self.select_button = Button(self, text="Select DICOM RT Struct files", command=self.run_code)
+        self.select_button = Button(self, text="Select NIfTI files", command=self.run_code)
         self.select_button.place(x=50, y=195, width=550, height=35)
 
     def run_code(self):
@@ -51,11 +51,12 @@ class P_NIfTI(Frame):
         t.start()
 
     def select_files(self):
-        filetypes = [('Fichiers DICOM', '*.dcm')]
-        files = filedialog.askopenfilenames(initialdir=os.getcwd(), title="Sélectionner des fichiers", filetypes=filetypes)
+        filetypes = [('Fichiers DICOM', '*.nii')]
+        files = filedialog.askopenfilenames(initialdir=os.getcwd(), title="Choose files", filetypes=filetypes)
 
         if files:
             for f in files:
+                Process_Files.process_Nifti_file(f,Smoothing=self.ComboSmooth.current(),save_external_stl=self.ComboSTL.current(),fichier=self.ComboSTL.current())
                 DS = pydicom.dcmread(f)
                 if(DS.Modality == "RTSTRUCT"):
                     size = 0

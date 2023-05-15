@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import filedialog
 
+from utils.Process_Dicom import from_Dicom_STL_Encapsulated, new_create_Dicom_From_Nothing
 
 import os
 Text_intro = "This page allow to manipulate DICOM STL Encapsulated files."
@@ -21,13 +22,15 @@ class P_Viewer(Frame):
 
 
     def select_DICOM(self):
-        filetypes = [('Fichiers DICOM', '*.dcm')]
+        filetypes = [('DICOM File', '*.dcm')]
         file = filedialog.askopenfilename(initialdir=os.getcwd(), title="Choose a file", filetypes=filetypes)
         if file:
-            print(file)
+            from_Dicom_STL_Encapsulated(file)
+            print("File extracted to :"+os.path.dirname(file))
 
     def select_STL(self):
-        filetypes = [('Fichiers STL', '*.stl')]
+        filetypes = [('STL File', '*.stl')]
         file = filedialog.askopenfilename(initialdir=os.getcwd(), title="Choose a file", filetypes=filetypes)
         if file:
-            print(file)
+            new_create_Dicom_From_Nothing(file)
+            print("File extracted to :" + os.path.dirname(file))

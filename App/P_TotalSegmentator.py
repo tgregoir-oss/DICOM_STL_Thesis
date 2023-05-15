@@ -13,8 +13,9 @@ from utils import Process_Files
 TypeSTL = ['Binary','ASCII']
 SmoothOption = ['True','False']
 OutputList = ["STL", "DICOM", "STL and DICOM"]
-
-Text_intro = "This page allow to reconstruct 3D Models from a serie of DICOM CT Scan. \n You can modify the settings to obtain results that you want."
+typeTask = ["total","lung_vessels","covid","cerebral_bleed","hip_implant","coronary_arteries","body","pleural_pericard_effusion","liver_vessels","heartchambers_test","bones_tissue_test","aortic_branches_test"]
+fastOption = [False,True]
+Text_intro = "This page allow to reconstruct 3D Models from a serie of DICOM CT Scan. \nYou can modify the settings to obtain results that you want."
 class P_TotalSegmentator(Frame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -41,7 +42,19 @@ class P_TotalSegmentator(Frame):
         self.ComboOutput_text = Label(self, text="Generated output", anchor='w')
         self.ComboOutput_text.place(x=450, y=75, width=150, height=25)
 
-        self.select_button = Button(self, text="Select DICOM RT Struct files", command=self.run_code)
+        self.ComboTask = Combobox(self, values=typeTask, state="readonly")
+        self.ComboTask.place(x=50, y=150, width=150, height=25)
+        self.ComboTask.current(0)
+        self.ComboTask_text = Label(self, text="Type of Task", anchor='w')
+        self.ComboTask_text.place(x=50, y=125, width=150, height=25)
+
+        self.ComboFast = Combobox(self, values=fastOption, state="readonly")
+        self.ComboFast.place(x=250, y=150, width=150, height=25)
+        self.ComboFast.current(0)
+        self.ComboFast_text = Label(self, text="Fast Segmentation", anchor='w')
+        self.ComboFast_text.place(x=250, y=125, width=150, height=25)
+
+        self.select_button = Button(self, text="Select DICOM CT scan serie folder", command=self.run_code)
         self.select_button.place(x=50, y=195, width=550, height=35)
 
     def run_code(self):
@@ -54,4 +67,4 @@ class P_TotalSegmentator(Frame):
         directory = filedialog.askdirectory(initialdir=os.getcwd(), title="Sélectionner des fichiers")
 
         if directory:
-            print(directory)
+            Process_Files.check_dicom_series(directory,0,0,fast=self.ComboFast.get(),task=self.ComboTask.get(),fichier=self.ComboSTL.get(),save_external_stl=self.ComboOutput.get(),smoothing=self.ComboSmooth.get())
