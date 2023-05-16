@@ -5,9 +5,11 @@ from utils.Process_Dicom import *
 import dicom2nifti
 import gzip
 import shutil
+from totalsegmentator.python_api import totalsegmentator
 from utils.Marching_Cubes import *
 import numpy as np
 import os
+from colorama import Fore,Style
 import time
 
 
@@ -80,6 +82,10 @@ def process_DICOM_RT_Strcut(path, definition=256, save_external_stl=2, Smoothing
     print(f'100% done \t| Total Execution Time : {time.time()-start:.2}s')
 
 def process_Nifti_file(path, new_path=None, Smoothing=3,save_external_stl=2, fichier=0):
+    if(new_path == None):
+        NP = path.split(".")[0] +".stl"
+    else:
+        NP = new_path
     file = nib.load(path)
     data = file.get_fdata()
 
@@ -101,19 +107,20 @@ def process_Nifti_file(path, new_path=None, Smoothing=3,save_external_stl=2, fic
     contour_z.reverse()
     # model_bitmap = gaussian_filter(model_bitmap, sigma=[3,3,2], mode='constant',cval=0.0 )
 
-    check = marching_cubes(model_bitmap, new_path, contour_z, fichier)
+    check = marching_cubes(model_bitmap, NP, contour_z, fichier)
 
     if (check == True):
         if (Smoothing == 3):
-            Smooth_Mesh(new_path, 0,fichier)
+            Smooth_Mesh(NP, 0,fichier)
         if (save_external_stl >= 1):
-            new_create_Dicom_From_Nothing(new_path)
+            new_create_Dicom_From_Nothing(NP)
         return True
 
     return False
 
 
 def check_dicom_series(input_path, start=0, end=0,task="total",fast=False,fichier=0,save_external_stl=2,smoothing=True):
+    print(task,fast)
     files = os.listdir(input_path)
     dicom_files = [f for f in files if f.endswith(".dcm")]
     if (len(dicom_files) == 0):
@@ -149,14 +156,19 @@ def check_dicom_series(input_path, start=0, end=0,task="total",fast=False,fichie
             position += 1
     print("everything seems ok")
 
-    dicom2nifti.convert_dicom.dicom_array_to_nifti(new_datasets, "test.nii.gz", reorient_nifti=True)
+    dicom2nifti.convert_dicom.dicom_array_to_nifti(new_datasets, "sub_folder/test.nii.gz", reorient_nifti=True)
+
+    totalsegmentator("sub_folder/test.nii.gz","gz_folder/",task=task,fast=fast)
 
     process_folder_gz()
 
     List_file = os.listdir("nii_folder/")
+    new_path = os.path.dirname(input_path)
+    os.makedirs(new_path+"/STL_Segmentation/", exist_ok=True)
     print("we enter in process_folder_nii ")
     for i in List_file:
-        execute("nii_folder/" + i,)
+        execute("nii_folder/" + i,location_path=new_path+"/STL_Segmentation/",save_external_stl=save_external_stl,smoothing=smoothing,fichier=fichier)
+    print("==============================\nEnd of automatic segmentation\n==============================")
     return True
 
 
@@ -216,19 +228,17 @@ def check_path(input_path, start=0, end= inf):
         print("error")
         return False
 
-def execute(path,fichier=0,save_external_stl=2,smoothing=True):
+def execute(path,location_path,fichier=0,save_external_stl=2,smoothing=True):
     Splitted_path = path.split(".")
-
-    new_path = "stl_folder" +"/"+ str(Splitted_path[0].split("/")[1]) + ".stl"
+    new_file = str(Splitted_path[0].split("/")[1]) + ".stl"
+    new_path = location_path + new_file
 
     start = time.time()
     check = process_Nifti_file(path,new_path=new_path,fichier=fichier,save_external_stl=save_external_stl,Smoothing=smoothing)
 
     end = time.time()
-    elapsed = end - start
+    elapsed = round(end-start, 2)
     if(check):
-        print("\033[92mFile : {} Correctly created\033[00m ".format(new_path))
-        print(f'\033[92mTemps d\'exécution : {elapsed:.2}s \033[00m ')
+        print("Organ : " + new_file.split(".")[0] + " Correctly segmented. Computational Time : " + str(elapsed)+"s")
     else:
-        print("\033[91mFile : {} Not created because the file didn't contain data to create STL file\033[00m".format(new_path))
-
+        print("Organ : " + new_file.split(".")[0] +" not Segmented")

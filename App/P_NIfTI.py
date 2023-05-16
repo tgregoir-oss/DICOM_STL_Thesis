@@ -56,10 +56,8 @@ class P_NIfTI(Frame):
 
         if files:
             for f in files:
-                Process_Files.process_Nifti_file(f,Smoothing=self.ComboSmooth.current(),save_external_stl=self.ComboSTL.current(),fichier=self.ComboSTL.current())
-                DS = pydicom.dcmread(f)
-                if(DS.Modality == "RTSTRUCT"):
-                    size = 0
-                    Process_Files.process_DICOM_RT_Strcut(f,definition=size,save_external_stl=self.ComboSTL.current(),Smoothing=self.ComboSmooth.current(), fichier=self.ComboSTL.current())
+                RE_Value = Process_Files.process_Nifti_file(f,Smoothing=self.ComboSmooth.current(),save_external_stl=self.ComboSTL.current(),fichier=self.ComboSTL.current())
+                if(RE_Value):
+                    print(f.title() +" correctly constructed")
                 else:
-                    print(Fore.RED + "Erreur : le fichier :"+ f.title() +" n'est pas un DICOM RT Struct'" + Style.RESET_ALL)
+                    print(f.title() +" not reconstructed")

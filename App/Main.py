@@ -7,6 +7,7 @@ import os
 import subprocess
 import webbrowser
 import time
+from colorama import Fore
 
 from P_Viewer import P_Viewer
 from P_RT_Struct import P_RT_Struct
@@ -55,7 +56,8 @@ class MyApp(tk.Tk):
 
     def write_stdout(self, message):
         # self.output.config(text=self.output.cget("text") + message)
-        self.output.insert(INSERT, message)
+        colored_text = message.replace("[RED]",Fore.RED).replace("[GREEN]",Fore.GREEN)
+        self.output.insert(INSERT, colored_text)
     def select_files(self):
         filetypes = (
             ('Fichiers DICOM', '*.dcm'),

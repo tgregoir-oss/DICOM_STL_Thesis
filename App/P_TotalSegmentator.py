@@ -67,4 +67,4 @@ class P_TotalSegmentator(Frame):
         directory = filedialog.askdirectory(initialdir=os.getcwd(), title="Sélectionner des fichiers")
 
         if directory:
-            Process_Files.check_dicom_series(directory,0,0,fast=self.ComboFast.get(),task=self.ComboTask.get(),fichier=self.ComboSTL.get(),save_external_stl=self.ComboOutput.get(),smoothing=self.ComboSmooth.get())
+            Process_Files.check_dicom_series(directory,0,0,fast=self.ComboFast.get(),task=self.ComboTask.get(),fichier=self.ComboSTL.current(),save_external_stl=self.ComboOutput.current(),smoothing=self.ComboSmooth.current())
