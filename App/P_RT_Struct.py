@@ -3,10 +3,9 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter import filedialog, Spinbox
 import os
-import sys
+
 import pydicom
 import threading
-from colorama import Fore,Style
 
 from utils import Process_Files
 
@@ -73,6 +72,6 @@ class P_RT_Struct(Frame):
                         print('Error on size. Value set to 206')
                         size = 206
 
-                    Process_Files.process_DICOM_RT_Strcut(f,definition=size,save_external_stl=self.ComboSTL.current(),Smoothing=self.ComboSmooth.current(), fichier=self.ComboSTL.current())
+                    Process_Files.process_DICOM_RT_Strcut(f,definition=size,save_external_stl=self.ComboOutput.current(),Smoothing=self.ComboSmooth.current(), fichier=self.ComboSTL.current())
                 else:
-                    print(Fore.RED + "Erreur : le fichier :"+ f.title() +" n'est pas un DICOM RT Struct'" + Style.RESET_ALL)
+                    print("Erreur : le fichier :"+ f.title() +" n'est pas un DICOM RT Struct'")

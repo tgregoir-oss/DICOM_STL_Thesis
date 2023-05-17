@@ -9,7 +9,6 @@ from totalsegmentator.python_api import totalsegmentator
 from utils.Marching_Cubes import *
 import numpy as np
 import os
-from colorama import Fore,Style
 import time
 
 
@@ -19,6 +18,7 @@ fichier : 1 = ascii | 0 = Binary
 
 
 def process_DICOM_RT_Strcut(path, definition=256, save_external_stl=2, Smoothing=0, fichier=0):
+    print("Start Process : " + path)
     start = time.time()
     DC = pydicom.dcmread(path)
     contours = DC[0x3006, 0x0039]
@@ -63,12 +63,12 @@ def process_DICOM_RT_Strcut(path, definition=256, save_external_stl=2, Smoothing
         #if (Smoothing == 1 or Smoothing == 3):
         if (Smoothing == 0):
             model_bitmap = gaussian_filter(model_bitmap, sigma=[3, 3, 2], mode='constant', cval=0.0)
-
+        Directory = os.path.dirname(path)
+        os.makedirs(Directory + "/STL_Segmentation/", exist_ok=True)
+        STL_path = Directory + "/STL_Segmentation/" + name + ".stl"
         if fichier == 1:
-            STL_path = name + ".stl"
             f = open(STL_path, "w")
         else:
-            STL_path = name + "_b.stl"
             f = open(STL_path, "wb")
         marching_cubes_offset(model_bitmap, f, offset, contours_z, definition + 2, fichier)
         f.close()
@@ -78,6 +78,11 @@ def process_DICOM_RT_Strcut(path, definition=256, save_external_stl=2, Smoothing
             Smooth_Mesh(STL_path, 0,fichier)
         if (save_external_stl == 1 or save_external_stl == 2):
             new_create_Dicom_From_Nothing(STL_Path=STL_path,DICOM_Path=path)
+        if (save_external_stl ==1):
+            for check_delete in os.listdir(Directory + "/STL_Segmentation/"):
+                chemin_check_delete = os.path.join(Directory + "/STL_Segmentation/",check_delete)
+                if(chemin_check_delete.endswith(".stl")):
+                    os.remove(chemin_check_delete)
             #to_Dicom_STL_Encapsulated(path, STL_path)
     print(f'100% done \t| Total Execution Time : {time.time()-start:.2}s')
 
@@ -114,13 +119,20 @@ def process_Nifti_file(path, new_path=None, Smoothing=3,save_external_stl=2, fic
             Smooth_Mesh(NP, 0,fichier)
         if (save_external_stl >= 1):
             new_create_Dicom_From_Nothing(NP)
+        if (save_external_stl ==1):
+            os.remove(NP)
         return True
 
     return False
 
 
 def check_dicom_series(input_path, start=0, end=0,task="total",fast=False,fichier=0,save_external_stl=2,smoothing=True):
-    print(task,fast)
+    for i in os.listdir("App/gz_folder/"):
+        os.remove("App/gz_folder/"+i)
+    for i in os.listdir("App/nii_folder/"):
+        os.remove("App/nii_folder/"+i)
+    for i in os.listdir("App/sub_folder/"):
+        os.remove("App/sub_folder/"+i)
     files = os.listdir(input_path)
     dicom_files = [f for f in files if f.endswith(".dcm")]
     if (len(dicom_files) == 0):
@@ -154,49 +166,52 @@ def check_dicom_series(input_path, start=0, end=0,task="total",fast=False,fichie
             return False
         else:
             position += 1
-    print("everything seems ok")
+    print("Dicom series complete")
 
-    dicom2nifti.convert_dicom.dicom_array_to_nifti(new_datasets, "sub_folder/test.nii.gz", reorient_nifti=True)
-
-    totalsegmentator("sub_folder/test.nii.gz","gz_folder/",task=task,fast=fast)
+    dicom2nifti.convert_dicom.dicom_array_to_nifti(new_datasets, "App/sub_folder/test.nii.gz", reorient_nifti=True)
+    if(str(fast)== str(True) and (task == "total"or task == "body")):
+        rapidity = True
+    else:
+        rapidity = False
+    totalsegmentator("App/sub_folder/test.nii.gz","App/gz_folder/",task=task,fast=rapidity)
 
     process_folder_gz()
 
-    List_file = os.listdir("nii_folder/")
+    List_file = os.listdir("App/nii_folder/")
     new_path = os.path.dirname(input_path)
     os.makedirs(new_path+"/STL_Segmentation/", exist_ok=True)
     print("we enter in process_folder_nii ")
     for i in List_file:
-        execute("nii_folder/" + i,location_path=new_path+"/STL_Segmentation/",save_external_stl=save_external_stl,smoothing=smoothing,fichier=fichier)
+        execute("App/nii_folder/" + i,location_path=new_path+"/STL_Segmentation/",save_external_stl=save_external_stl,smoothing=smoothing,fichier=fichier)
     print("==============================\nEnd of automatic segmentation\n==============================")
     return True
 
 
 def process_nii_gz(path):
-    os.makedirs("nii_folder/", exist_ok=True)
+    os.makedirs("App/nii_folder/", exist_ok=True)
     splitted_path = path.split(".")
 
-    output_path = "nii_folder/" + splitted_path[0].split("/")[1] + "." + splitted_path[1]
+    output_path = "App/nii_folder/" + splitted_path[0].split("/")[2] + "." + splitted_path[1]
 
     with gzip.open(path, 'rb') as f_in:
         with open(output_path, 'wb') as f_out:
             shutil.copyfileobj(f_in, f_out)
 
-    List_file = os.listdir("nii_folder/")
+    List_file = os.listdir("App/nii_folder/")
 
 
 def process_folder_nii():
-    List_file = os.listdir("nii_folder/")
+    List_file = os.listdir("App/nii_folder/")
     print("we enter in process_folder_nii ")
     for i in List_file:
-        execute("nii_folder/" + i)
+        execute("App/nii_folder/" + i)
 
 
 def process_folder_gz():
     print("we enter in process folder function")
-    List_file = os.listdir("gz_folder/")
+    List_file = os.listdir("App/gz_folder/")
     for i in List_file:
-        process_nii_gz("gz_folder/" + i)
+        process_nii_gz("App/gz_folder/" + i)
 
 
 def check_path(input_path, start=0, end= inf):
@@ -230,7 +245,7 @@ def check_path(input_path, start=0, end= inf):
 
 def execute(path,location_path,fichier=0,save_external_stl=2,smoothing=True):
     Splitted_path = path.split(".")
-    new_file = str(Splitted_path[0].split("/")[1]) + ".stl"
+    new_file = str(Splitted_path[0].split("/")[2]) + ".stl"
     new_path = location_path + new_file
 
     start = time.time()

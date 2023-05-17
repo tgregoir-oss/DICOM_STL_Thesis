@@ -1,5 +1,7 @@
 import os.path
 
+import numpy as np
+
 from utils.Offset import *
 from utils.Point import *
 import random
@@ -91,7 +93,6 @@ def create_Dicom_From_Nothing(STL_Path,ID):
     DS.add(DataElement(0x00420010, "ST", str(f.name).split(".")[0]))
 
     f_data = f.read()
-    print(f.name)
     DS.add(DataElement((0x0042, 0x0011), 'OB', f_data))
 
     DS.add(DataElement((0x0042, 0x0012), 'LO', "model/stl"))
@@ -153,9 +154,11 @@ def new_create_Dicom_From_Nothing(STL_Path,ID=None,DICOM_Path = None,New_Path = 
         DS = pydicom.dcmread(DICOM_Path)
         for data_element in DS:
             del DS[data_element.tag]
-        print(DS)
     else:
         DS = pydicom.Dataset()
+        preamble = np.zeros(128, dtype=np.uint8)
+        preamble[:4] = [68,73,67,77]
+        DS.preamble = preamble.tobytes()
     if(ID==None):
         NID = random.randint(100000,999999)
     else:
@@ -196,10 +199,9 @@ def new_create_Dicom_From_Nothing(STL_Path,ID=None,DICOM_Path = None,New_Path = 
 
     DS.add(DataElement(0x0040A043, "SQ", None))
 
-    DS.add(DataElement(0x00420010, "ST", str(f.name).split(".")[0]))
-
+    DS.add(DataElement(0x00420010, "ST", str(os.path.basename(f.name)).split(".")[0]))
     f_data = f.read()
-    print(f.name)
+
     DS.add(DataElement((0x0042, 0x0011), 'OB', f_data))
 
     DS.add(DataElement((0x0042, 0x0012), 'LO', "model/stl"))

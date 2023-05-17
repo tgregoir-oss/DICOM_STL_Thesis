@@ -1,12 +1,10 @@
 import tkinter
 from tkinter import *
 from tkinter.ttk import *
-from tkinter import filedialog, Spinbox
+from tkinter import filedialog
 import os
-import sys
-import pydicom
 import threading
-from colorama import Fore,Style
+
 
 from utils import Process_Files
 

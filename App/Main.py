@@ -7,7 +7,9 @@ import os
 import subprocess
 import webbrowser
 import time
-from colorama import Fore
+import pkg_resources
+import pip
+
 
 from P_Viewer import P_Viewer
 from P_RT_Struct import P_RT_Struct
@@ -55,9 +57,9 @@ class MyApp(tk.Tk):
 
 
     def write_stdout(self, message):
-        # self.output.config(text=self.output.cget("text") + message)
-        colored_text = message.replace("[RED]",Fore.RED).replace("[GREEN]",Fore.GREEN)
-        self.output.insert(INSERT, colored_text)
+        self.output.insert(INSERT, message)
+
+
     def select_files(self):
         filetypes = (
             ('Fichiers DICOM', '*.dcm'),
@@ -89,6 +91,15 @@ class MyApp(tk.Tk):
 
 
 if __name__ == "__main__":
+    #TODO to complete list
+    for p in ["numpy","pydicom","nibabel"]:
+        try:
+            pkg_resources.get_distribution(p)
+            print("packages "+p +" is installed")
+        except pkg_resources.DistributionNotFound:
+            print("packages " + p + " is not installed")
+            pip.main(['install',p])
+            print("packages " + p + " download complete")
     app = MyApp()
 
     app.mainloop()

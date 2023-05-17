@@ -56,7 +56,8 @@ class P_NIfTI(Frame):
 
         if files:
             for f in files:
-                RE_Value = Process_Files.process_Nifti_file(f,Smoothing=self.ComboSmooth.current(),save_external_stl=self.ComboSTL.current(),fichier=self.ComboSTL.current())
+                print("Start Process : " + f)
+                RE_Value = Process_Files.process_Nifti_file(f,Smoothing=self.ComboSmooth.current(),save_external_stl=self.ComboOutput.current(),fichier=self.ComboSTL.current())
                 if(RE_Value):
                     print(f.title() +" correctly constructed")
                 else:

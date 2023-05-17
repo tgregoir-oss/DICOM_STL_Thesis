@@ -33,4 +33,4 @@ class P_Viewer(Frame):
         file = filedialog.askopenfilename(initialdir=os.getcwd(), title="Choose a file", filetypes=filetypes)
         if file:
             new_create_Dicom_From_Nothing(file)
-            print("File extracted to :" + os.path.dirname(file))
+            print("File encapsulate to :" + os.path.dirname(file))
