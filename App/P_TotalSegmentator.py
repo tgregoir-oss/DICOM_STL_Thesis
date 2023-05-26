@@ -1,4 +1,3 @@
-import tkinter
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import filedialog
@@ -13,19 +12,19 @@ SmoothOption = ['True','False']
 OutputList = ["STL", "DICOM", "STL and DICOM"]
 typeTask = ["total","lung_vessels","covid","cerebral_bleed","hip_implant","coronary_arteries","body","pleural_pericard_effusion","liver_vessels","heartchambers_test","bones_tissue_test","aortic_branches_test"]
 fastOption = [False,True]
-Text_intro = "This page allow to reconstruct 3D Models from a serie of DICOM CT Scan. \nYou can modify the settings to obtain results that you want."
+Text_intro = "This page allow to reconstruct 3D Models from a serie of DICOM CT Scan. \nYou can modify the settings to obtain results that you want.\nUsing AI can take time and be sure that your computer is powerful enough "
 class P_TotalSegmentator(Frame):
     def __init__(self, parent):
         super().__init__(parent)
 
         # Ajouter du code pour la page 1 ici
         label = Label(self, text=Text_intro, font=("Arial",12),borderwidth=2,relief="solid")
-        label.place(x=50, y=10, width=550, height=45)
+        label.place(x=50, y=10, width=550, height=57)
 
         self.ComboSTL = Combobox(self, values=TypeSTL,state="readonly")
         self.ComboSTL.place(x=50, y=100, width=150, height=25)
         self.ComboSTL.current(0)
-        self.ComboSTL_text = Label(self, text="Type of the encrypted STL", anchor='w')
+        self.ComboSTL_text = Label(self, text="Type of the encoded STL", anchor='w')
         self.ComboSTL_text.place(x=50, y=75, width=150, height=25)
 
         self.ComboSmooth = Combobox(self, values=SmoothOption,state="readonly")

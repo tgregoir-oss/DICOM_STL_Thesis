@@ -265,33 +265,37 @@ table = [
 ]
 
 
-def write_file(TQ, f, fichier):
-    if(fichier == 0):
+def write_file(tq, f, fichier):
+    if fichier == 0:
         f.write(struct.pack('80s', b'nothing'))
-        f.write(struct.pack('I', len(TQ)))
-        for T in TQ:
+        f.write(struct.pack('I', len(tq)))
+        for T in tq:
             write_triangle_binary(T.a, T.b, T.c, f)
     else:
         f.write("solid test\n")
-        for T in TQ:
+        for T in tq:
             write_triangle_ascii(T.a, T.b, T.c, f)
         f.write("endsolid")
 
 
 # This function will write a triangle and his normal in a STL ascii file
 def write_triangle_ascii(a, b, c, f):
-    N1, N2, N3 = normal(a,b,c)
+    N1, N2, N3 = normal(a, b, c)
     f.write(" facet normal " + str(N1) + " " + str(N2) + " " + str(N3) + "\n")
     f.write("  outer loop\n")
-    f.write("   vertex " + str(ceil(a.x * 100) / 100) + " " + str(ceil(a.y * 100) / 100) + " " + str(ceil(a.z*100) / 100) + "\n")
-    f.write("   vertex " + str(ceil(b.x * 100) / 100) + " " + str(ceil(b.y * 100) / 100) + " " + str(ceil(b.z*100) / 100) + "\n")
-    f.write("   vertex " + str(ceil(c.x * 100) / 100) + " " + str(ceil(c.y * 100) / 100) + " " + str(ceil(c.z*100) / 100) + "\n")
+    f.write("   vertex " + str(ceil(a.x * 100) / 100) + " " + str(ceil(a.y * 100) / 100) + " " + str(
+        ceil(a.z * 100) / 100) + "\n")
+    f.write("   vertex " + str(ceil(b.x * 100) / 100) + " " + str(ceil(b.y * 100) / 100) + " " + str(
+        ceil(b.z * 100) / 100) + "\n")
+    f.write("   vertex " + str(ceil(c.x * 100) / 100) + " " + str(ceil(c.y * 100) / 100) + " " + str(
+        ceil(c.z * 100) / 100) + "\n")
     f.write("  endloop\n")
     f.write(" endfacet\n")
 
+
 # This function will write a triangle and his normal in a STL binary file
 def write_triangle_binary(a, b, c, f):
-    N1, N2, N3 = normal(a,b,c)
+    N1, N2, N3 = normal(a, b, c)
     f.write(struct.pack('f', N1))
     f.write(struct.pack('f', N2))
     f.write(struct.pack('f', N3))
@@ -306,14 +310,16 @@ def write_triangle_binary(a, b, c, f):
 This function is to link with treshold
 now, it could be deleted but it could be helpfull in the future if i try to mage the heinsflied (jsp comment ça s'écrit) pour des série de fichier DICOM
 """
+
+
 def treshold_binary(x):
-    if x > 4/9:
+    if x > 4 / 9:
         return 1
     else:
         return 0
 
 
-def treshold(x, kind = "binary"):
+def treshold(x, kind="binary"):
     if kind == "binary":
         return treshold_binary(x)
     else:
@@ -324,7 +330,8 @@ def treshold(x, kind = "binary"):
 def map_points_to_frame(a, GO, size):
     new_x = (a.x - GO.center_x) / (GO.max_x - GO.min_x)
     new_y = (a.y - GO.center_y) / (GO.max_y - GO.min_y)
-    return [int(new_x*size), int(new_y*size)]
+    return [int(new_x * size), int(new_y * size)]
+
 
 def create_bitmap(one_model_data, one_model_global_offset, definition):
     one_contour_z_values = []
@@ -356,12 +363,13 @@ def create_bitmap(one_model_data, one_model_global_offset, definition):
         model_bitmap.append(sub)
     return model_bitmap, one_contour_z_values
 
-def Smooth_Mesh(STL_Path, type =0, fichier = 0):
+
+def Smooth_Mesh(STL_Path, type=0, fichier=0):
     reader = vtk.vtkSTLReader()
     reader.SetFileName(STL_Path)
     reader.Update()
     mesh_data = reader.GetOutput()
-    if(type==0):
+    if type == 0:
         gaussian_filter = vtk.vtkSmoothPolyDataFilter()
         gaussian_filter.SetInputData(mesh_data)
         gaussian_filter.SetNumberOfIterations(70)
@@ -380,7 +388,7 @@ def Smooth_Mesh(STL_Path, type =0, fichier = 0):
         taubin_filter.Update()
         filtered_mesh_data = taubin_filter.GetOutput()
     writer = vtk.vtkSTLWriter()
-    if(fichier==0):
+    if fichier == 0:
         writer.SetFileTypeToBinary()
     else:
         writer.SetFileTypeToASCII()

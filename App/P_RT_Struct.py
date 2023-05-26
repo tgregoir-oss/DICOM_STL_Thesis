@@ -25,7 +25,7 @@ class P_RT_Struct(Frame):
         self.ComboSTL = Combobox(self, values=TypeSTL,state="readonly")
         self.ComboSTL.place(x=50, y=100, width=150, height=25)
         self.ComboSTL.current(0)
-        self.ComboSTL_text = Label(self, text="Type of the encrypted STL", anchor='w')
+        self.ComboSTL_text = Label(self, text="Type of the encoded STL", anchor='w')
         self.ComboSTL_text.place(x=50, y=75, width=150, height=25)
 
         self.ComboSmooth = Combobox(self, values=SmoothOption,state="readonly")

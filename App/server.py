@@ -3,7 +3,7 @@ import sys
 import pydicom
 import json
 
-from flask import Flask, render_template, request, jsonify, Response, make_response
+from flask import Flask, render_template
 
 app = Flask(__name__, static_folder='templates', static_url_path='', template_folder='templates')
 data = []
