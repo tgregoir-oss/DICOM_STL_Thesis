@@ -9,6 +9,8 @@ def make_point_offset(x, y, z, i, GO, z_values, size):
     new_x = 0.0
     new_y = 0.0
     new_z = 0.0
+    x = x -size/2
+    y = y -size/2
     if   (i == 0):
         new_x = ((x+1)/size)*(GO.max_x - GO.min_x) + GO.center_x
         new_y = (((2*y+1)/2)/size)*(GO.max_y - GO.min_y) + GO.center_y

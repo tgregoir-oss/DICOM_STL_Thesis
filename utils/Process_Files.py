@@ -17,7 +17,7 @@ fichier : 1 = ascii | 0 = Binary
 """
 
 
-def process_DICOM_RT_Strcut(path, definition=256, save_external_stl=2, Smoothing=0, fichier=0):
+def process_DICOM_RT_Strcut(path, definition=200, save_external_stl=2, Smoothing=0, fichier=0):
     print("Start Process : " + path)
     start = time.time()
     DC = pydicom.dcmread(path)
@@ -60,9 +60,8 @@ def process_DICOM_RT_Strcut(path, definition=256, save_external_stl=2, Smoothing
 
         contours_z.reverse()
         # ---------------------- Step 4 ----------------------
-        #if (Smoothing == 1 or Smoothing == 3):
-        if (Smoothing == 0):
-            model_bitmap = gaussian_filter(model_bitmap, sigma=[3, 3, 2], mode='constant', cval=0.0)
+        if (Smoothing == 0 or Smoothing == 1):
+            model_bitmap = gaussian_filter(model_bitmap, sigma=[2, 2, 2], mode='constant', cval=0.0)
         Directory = os.path.dirname(path)
         os.makedirs(Directory + "/STL_Segmentation/", exist_ok=True)
         STL_path = Directory + "/STL_Segmentation/" + name + ".stl"
@@ -73,8 +72,7 @@ def process_DICOM_RT_Strcut(path, definition=256, save_external_stl=2, Smoothing
         marching_cubes_offset(model_bitmap, f, offset, contours_z, definition + 2, fichier)
         f.close()
 
-        #if (Smoothing == 2 or Smoothing == 3):
-        if (Smoothing == 0):
+        if (Smoothing == 0 or Smoothing == 2):
             Smooth_Mesh(STL_path, 0,fichier)
         if (save_external_stl == 1 or save_external_stl == 2):
             new_create_Dicom_From_Nothing(STL_Path=STL_path,DICOM_Path=path)
@@ -110,7 +108,6 @@ def process_Nifti_file(path, new_path=None, Smoothing=3,save_external_stl=2, fic
     contour_z.insert(0,  - contour_z[1])
     contour_z.append(contour_z[len(contour_z) - 1] - abs(contour_z[0] - contour_z[1]))
     contour_z.reverse()
-    # model_bitmap = gaussian_filter(model_bitmap, sigma=[3,3,2], mode='constant',cval=0.0 )
 
     check = marching_cubes(model_bitmap, NP, contour_z, fichier)
 
@@ -198,13 +195,6 @@ def process_nii_gz(path):
             shutil.copyfileobj(f_in, f_out)
 
     List_file = os.listdir("App/nii_folder/")
-
-
-def process_folder_nii():
-    List_file = os.listdir("App/nii_folder/")
-    print("we enter in process_folder_nii ")
-    for i in List_file:
-        execute("App/nii_folder/" + i)
 
 
 def process_folder_gz():

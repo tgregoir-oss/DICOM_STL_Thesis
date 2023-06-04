@@ -42,9 +42,6 @@ def marching_cubes(bitmap, new_path, z_values,fichier):
         if(bitmap[L].any() or bitmap[L+1].any()):
             for i in range(len(bitmap[0])-1):
                 for j in range(len(bitmap[0][0])-1):
-                    #On itère sur chaque cube
-                    #On récupère les points pour savoir lesquels appartiennent au modèle ou non
-                    #on regarde alors dans le modèle les points dont on a besoin, on les créér puis on stock/écrit les triangles ainsi formé
                     look_up = str(treshold(bitmap[L + 1][i+1][j],"binary"))
                     look_up = str(treshold(bitmap[L + 1][i + 1][j + 1], "binary")) + look_up
                     look_up = str(treshold(bitmap[L + 1][i][j+1], "binary")) + look_up

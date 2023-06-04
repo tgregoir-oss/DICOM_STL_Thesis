@@ -67,8 +67,7 @@ class MyApp(tk.Tk):
             webbrowser.open_new('http://localhost:5000')
             return
 
-        files = tk.filedialog.askopenfilenames(initialdir=os.getcwd(), title="Sélectionner des fichiers",
-                                               filetypes=filetypes)
+        files = tk.filedialog.askopenfilenames(initialdir=os.getcwd(), title="Sélectionner des fichiers",filetypes=filetypes)
         if files:
             print("avant sub process")
             self.server_process = subprocess.Popen(['python', 'App/server.py'] + list(files))
@@ -84,7 +83,6 @@ class MyApp(tk.Tk):
                 time.sleep(2)
 
     def open_guide(self):
-
         dossier_enfant = os.path.join(os.path.join(os.getcwd(), 'App'), 'templates')
         chemin_fichier_python = os.path.join(dossier_enfant, 'User_Guide.html')
         webbrowser.open('file://' + chemin_fichier_python)
@@ -96,7 +94,6 @@ class MyApp(tk.Tk):
 
 
 if __name__ == "__main__":
-    # TODO to complete list
     for p in ["matplotlib", "scipy", "numpy", "pydicom", "nibabel", "TotalSegmentator", "vtk", "dicom2nifti"]:
         try:
             pkg_resources.get_distribution(p)

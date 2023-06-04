@@ -11,7 +11,7 @@ TypeSTL = ['Binary','ASCII']
 SmoothOption = ['True','False']
 OutputList = ["STL", "DICOM", "STL and DICOM"]
 
-Text_intro = "This page allow to reconstruct 3D Models from NIfTI. \nYou can modify the settings to obtain results that you want.\nBe sure that the NIfTI file are correct before using."
+Text_intro = "This page allow to reconstruct 3D Models from NIfTI. \nYou can modify the settings to obtain results that you want.\nBe sure that the NIfTI files are correct before using."
 class P_NIfTI(Frame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -42,8 +42,6 @@ class P_NIfTI(Frame):
         self.select_button.place(x=50, y=195, width=550, height=35)
 
     def run_code(self):
-
-        # Crée un thread pour exécuter la fonction de traitement
         t = threading.Thread(target=self.select_files)
         t.start()
 

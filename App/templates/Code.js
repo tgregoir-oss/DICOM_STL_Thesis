@@ -31,6 +31,7 @@ axios.get('/data').then(function(response){
     let encoder = new TextEncoder();
     let process_data = [];
     for (let i in answer){
+      load_info_python(answer[i])
 	  var binarystring = atob(answer[i]['00420011'].InlineBinary);
 	  var bytearray = new Uint8Array(binarystring.length );
 	  for (var j = 0; j < binarystring.length; j += 1) {
@@ -216,6 +217,30 @@ function load_info(dataSet){
     const contentDiv = document.createElement('div');
     contentDiv.innerHTML += "<p style='font-weight: bold;padding-left: 10px'>Nom Du Fichier :</p>";
     contentDiv.innerHTML += "<p style='padding-left: 10px'>"+ dataSet.string('x00420010') +"</p>";
+
+    childDiv.appendChild(button);
+    childDiv.appendChild(contentDiv);
+    childDiv.style.overflowY = 'auto';
+
+    childDiv.style.borderTop= '1px solid black';
+    info_Files.appendChild(childDiv);
+
+    button.addEventListener('click', () => {
+        if (childDiv.style.height === '20px') {
+            childDiv.style.height = 'fit-content';
+        } else {
+            childDiv.style.height = '20px';
+        }
+    });
+}
+
+function load_info_python(dataSet){
+    const childDiv = document.createElement('div');
+    const button = document.createElement('button');
+    button.innerHTML = '+/- '+dataSet['00420010'].Value;
+    const contentDiv = document.createElement('div');
+    contentDiv.innerHTML += "<p style='font-weight: bold;padding-left: 10px'>Nom Du Fichier :</p>";
+    contentDiv.innerHTML += "<p style='padding-left: 10px'>"+dataSet['00420010'].Value +"</p>";
 
     childDiv.appendChild(button);
     childDiv.appendChild(contentDiv);
