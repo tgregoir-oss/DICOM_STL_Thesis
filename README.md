@@ -2,11 +2,13 @@
 
 This repository contains all the code for the open-source software developed for my master's thesis. The software is released under the MIT license, allowing anyone to use or modify it.
 
-Please note that the software will not be actively upgraded until the creator defends their master's thesis to avoid any issues with the jury. However, you are encouraged to open an issue if you encounter any bugs or problems with the software.
+Please note that the software will not be actively upgraded until the creator defends his master's thesis to avoid any issues with the jury. However, you are encouraged to open an issue if you encounter any bugs or problems with the software.
 
 ## Requirements
 
-This software can be used on **Linux** or **Windows** operating systems. It requires **Python** to be installed in order to run. During launch, a test is performed to check for the necessary libraries, and any missing packages are automatically installed.
+This software can be used on **Linux** or **Windows** operating systems. It requires **Python** to be installed in order to run. 
+To launch the software, a double click on the file run-Windows.bat or a right-click + run as a software option on the run-Linux.sh file is enough.
+During launch, a test is performed to check for the necessary libraries, and any missing packages are automatically installed.
 
 Here is a list of the required packages for those who would like to know:
 
